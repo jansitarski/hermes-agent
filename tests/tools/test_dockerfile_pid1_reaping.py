@@ -21,6 +21,7 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DOCKERFILE = REPO_ROOT / "Dockerfile"
+DOCKERIGNORE = REPO_ROOT / ".dockerignore"
 
 
 @pytest.fixture(scope="module")
@@ -132,3 +133,10 @@ def test_dockerfile_materializes_local_tui_ink_package(dockerfile_text):
         and "import('@hermes/ink')" in step
         for step in _run_steps(dockerfile_text)
     )
+
+
+def test_dockerignore_excludes_nested_dependency_dirs():
+    text = DOCKERIGNORE.read_text()
+
+    assert "**/node_modules" in text
+    assert "**/.venv" in text
